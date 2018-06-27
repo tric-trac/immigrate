@@ -22,14 +22,15 @@ module Immigrate
     def create_user_mapping server
       server_config = database_configuration[Rails.env][server.to_s]
       execute <<-SQL
-        CREATE USER MAPPING FOR #{current_user}
+        CREATE USER MAPPING FOR #{current_user(server_config)}
         SERVER #{server}
         OPTIONS (user '#{server_config['user']}',
                  password '#{server_config['password']}')
       SQL
     end
 
-    def current_user
+    def current_user server_config
+      return server_config['current_user'] unless server_config['current_user'].nil?
       execute("SELECT CURRENT_USER").first['current_user']
     end
 
