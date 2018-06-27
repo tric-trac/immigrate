@@ -3,6 +3,7 @@ module Immigrate
     NATIVE_DATABASE_TYPES = {
       string:      'character varying',
       text:        'text',
+      bigint:      'bigint',
       integer:     'integer',
       float:       'float',
       decimal:     'decimal',
@@ -42,10 +43,12 @@ module Immigrate
 
     attr_reader :server, :name, :columns
 
-    def initialize name, server
+    def initialize name, server, **options
+      options.assert_valid_keys(:schema_name, :table_name)
       @name = name
       @server = server
       @columns = []
+      @options = options
     end
 
     def column name, type
@@ -61,7 +64,7 @@ module Immigrate
     end
 
     def sql
-      "CREATE FOREIGN TABLE #{name} (#{column_definitions}) SERVER #{server}"
+      "CREATE FOREIGN TABLE #{name} (#{column_definitions}) SERVER #{server} OPTIONS (#{options})"
     end
 
     def column_definitions
@@ -70,6 +73,10 @@ module Immigrate
 
     def native_column_type type
       NATIVE_DATABASE_TYPES[type]
+    end
+
+    def options
+      @options.map { |option| "#{option.first} '#{option.second}'"}.join(',')
     end
   end
 end

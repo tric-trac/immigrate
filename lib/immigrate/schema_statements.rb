@@ -10,16 +10,16 @@ module Immigrate
       database.drop_fdw_extension
     end
 
-    def create_foreign_table foreign_table, foreign_server
-      fdw = create_foreign_table_definition(foreign_table, foreign_server)
+    def create_foreign_table foreign_table, foreign_server, **options
+      fdw = create_foreign_table_definition(foreign_table, foreign_server, **options)
 
       yield fdw if block_given?
 
       database.execute fdw.sql
     end
 
-    def create_foreign_table_definition foreign_table, foreign_server
-      ForeignTableDefinition.new foreign_table, foreign_server
+    def create_foreign_table_definition foreign_table, foreign_server, **options
+      ForeignTableDefinition.new foreign_table, foreign_server, **options
     end
 
     def drop_foreign_table foreign_table, _foreign_server = nil
