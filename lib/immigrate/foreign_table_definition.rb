@@ -44,7 +44,7 @@ module Immigrate
     attr_reader :server, :name, :columns
 
     def initialize name, server, **options
-      options.assert_valid_keys(:schema_name, :table_name, :primary_key)
+      options.assert_valid_keys(:schema_name, :table_name)
       @name = name
       @server = server
       @columns = []
